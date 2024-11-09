@@ -3,7 +3,21 @@
 #include <ctype.h>
 #include <string.h>
 
-//å»ºç«‹æ ˆæ•°æ®ç»“æ„
+/*
+ÖĞ×º±í´ïÊ½¼ÆËã
+±í´ïÊ½ÖĞÏàÁÚÁ½¸ö²Ù×÷·ûµÄ¼ÆËã´ÎĞòÎª£º
+ÓÅÏÈ¼¶¸ßµÄÏÈ¼ÆËã
+ÓÅÏÈ¼¶ÏàÍ¬µÄ¸ù¾İ½áºÏĞÔ£¨ÔËËã·½Ïò£©À´½øĞĞ¼ÆËã
+µ±Ê¹ÓÃÀ¨ºÅÊ±´Ó×îÄÚ²ãÀ¨ºÅ¿ªÊ¼¼ÆËã
+*/
+
+/* 
+ºó×º±í´ïÊ½ÌØµã
+1¡¢ÓëÏàÓ¦µÄÖĞ×º±í´ïÊ½ÖĞµÄ²Ù×÷Êı´ÎĞòÏàÍ¬
+2¡¢Ã»ÓĞÀ¨ºÅ
+*/
+
+//½ÚµãÀàĞÍ
 typedef struct Node {
     char data;
     struct Node *next;
@@ -13,19 +27,19 @@ typedef struct Stack {
     Node *top;
 } Stack;
 
-//åˆ›å»ºæ–°çš„æ ˆ
+//½¨Õ»
 Stack* createStack() {
     Stack *stack = (Stack *)malloc(sizeof(Stack));
     stack->top = NULL;
     return stack;
 }
 
-//åˆ¤æ–­æ˜¯å¦ä¸ºç©ºæ ˆ
+//ÅĞ¶ÏÊÇ·ñÎª¿Õ
 int isEmpty(Stack *stack) {
     return stack->top == NULL;
 }
 
-//å…¥æ ˆ
+//½øÕ»
 void push(Stack *stack, char data) {
     Node *newNode = (Node *)malloc(sizeof(Node));
     newNode->data = data;
@@ -33,7 +47,7 @@ void push(Stack *stack, char data) {
     stack->top = newNode;
 }
 
-//å‡ºæ ˆ
+//³öÕ»
 char pop(Stack *stack) {
     if (isEmpty(stack)) {
         printf("Stack underflow\n");
@@ -46,7 +60,7 @@ char pop(Stack *stack) {
     return data;
 }
 
-//å–æ ˆé¡¶å…ƒç´ 
+//µ÷È¡Õ»¶¥ÔªËØ
 char peek(Stack *stack) {
     if (isEmpty(stack)) {
         printf("Stack is empty\n");
@@ -55,7 +69,7 @@ char peek(Stack *stack) {
     return stack->top->data;
 }
 
-//è¿”å›è¿ç®—ç¬¦çš„ä¼˜å…ˆçº§
+//ÎªÔËËã·û¼ÓÈ¨
 int precedence(char op) {
     if (op == '+' || op == '-')
         return 1;
@@ -64,12 +78,12 @@ int precedence(char op) {
     return 0;
 }
 
-//åˆ¤æ–­æ˜¯å¦æ˜¯æ“ä½œæ•°
+//ÅĞ¶ÏÊÇ·ñÎªÔËËã·û
 int isOperator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/';
 }
 
-//ä¸­ç¼€è¡¨è¾¾å¼è½¬æ¢æˆåç¼€è¡¨è¾¾å¼
+//ÖĞ×º±í´ïÊ½×ª»¯Îªºó×º±í´ïÊ½
 void infixToPostfix(char* expression, char* postfix) {
     Stack *stack = createStack();
     int k = 0;
@@ -106,7 +120,12 @@ void infixToPostfix(char* expression, char* postfix) {
     postfix[k - 1] = '\0'; // Remove the last space and terminate string
 }
 
-//è®¡ç®—åç¼€è¡¨è¾¾å¼
+//¼ÆËãºó×º±í´ïÊ½
+/*
+¼ÆËãºó×º±í´ïÊ½²Ù×÷±È½Ï¼òµ¥£º
+¶Áµ½²Ù×÷ÊıÔòÈëÕ»
+¶Áµ½ÔËËã·û£¬µ¯³örightºÍleft½øĞĞ¼ÆËã£¬°ÑµÃµ½µÄ½á¹ûÈëÕ»
+*/
 int evaluatePostfix(char* postfix) {
     Stack *stack = createStack();
     int i = 0;
@@ -116,9 +135,9 @@ int evaluatePostfix(char* postfix) {
             while (isdigit(postfix[i])) {
                 num = num * 10 + (postfix[i++] - '0');
             }
-            push(stack, num);                                    //å°†æ“ä½œæ•°å…¥æ ˆ
+            push(stack, num);                                    //¶ÁÈ¡²Ù×÷Êı²¢ÈëÕ»
         } else if (isOperator(postfix[i])) {
-            int right = pop(stack);                              //æ“ä½œæ•°å‡ºæ ˆ
+            int right = pop(stack);                              //³öÕ»
             int left = pop(stack);
             switch (postfix[i]) {
                 case '+': push(stack, left + right); break;
@@ -142,7 +161,7 @@ int main() {
 
     char postfix[100];
     infixToPostfix(expression, postfix);
-    printf("åç¼€è¡¨è¾¾å¼ä¸ºï¼š%s\n", postfix);
+    printf("åç¼€è¡¨è¾¾å¼ä¸ºï¼?%s\n", postfix);
 
     int result = evaluatePostfix(postfix);
     printf("ç»“æœä¸ºï¼š%d\n", result);
